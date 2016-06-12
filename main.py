@@ -28,6 +28,13 @@ def userByNum(users, num):
             return user
     return None
 
+def tweetsByUser(tweets, user):
+    result = []
+    for tweet in tweets:
+        if (tweet.tweetedUsers.count(user) > 0): #트윗한 사람중 유저가 존재하면
+            result.append(tweet)
+    return result
+
 def ReadUserFile(users, filePath):
     file = open(filePath)
     lines = file.readlines()
@@ -75,9 +82,35 @@ def ReadDataFiles(users, tweets):
     ReadUserFile(users, "user.txt")
     ReadFriendFile(users, "friend.txt")
     ReadTweetFile(tweets, users, "word.txt")
+
+def DisplayStatistics(users, tweets):
+    totalFriendship = 0
+    totalTweets = 0
+    
+    for user in users:
+        totalFriendship += len(user.friends)
+    for tweet in tweets:
+        totalTweets += len(tweet.tweetedUsers)
+        
+    print("Total users:", len(users))
+    print("Total friendship records:", totalFriendship)
+    print("Total tweets:", totalTweets)
+
+def Top5Words(tweets):
+    tweets.sort(key=lambda tweet:len(tweet.tweetedUsers))
+    for i in range(0, 5):
+        print(tweets[i].word)
+
+def Top5Users(users, tweets):
+    users.sort(key=lambda user:len(tweetsByUser(tweets, user)))
+    for i in range(0, 5):
+        print(users[i].name)
             
 def main():
     ReadDataFiles(users, tweets)
+    DisplayStatistics(users, tweets)
+    Top5Words(tweets)
+    Top5Users(users, tweets)
     
 users = []
 tweets = []
