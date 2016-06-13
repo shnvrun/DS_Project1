@@ -97,12 +97,12 @@ def DisplayStatistics(users, tweets):
     print("Total tweets:", totalTweets)
 
 def Top5Words(tweets):
-    tweets.sort(key=lambda tweet:len(tweet.tweetedUsers))
+    tweets.sort(key=lambda tweet:len(tweet.tweetedUsers), reverse=True)
     for i in range(0, 5):
         print(tweets[i].word)
 
 def Top5Users(users, tweets):
-    users.sort(key=lambda user:len(tweetsByUser(tweets, user)))
+    users.sort(key=lambda user:len(tweetsByUser(tweets, user)), reverse=True)
     for i in range(0, 5):
         print(users[i].name)
             
