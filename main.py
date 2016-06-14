@@ -36,6 +36,7 @@ def tweetsByUser(tweets, user):
     return result
 
 def ReadUserFile(users, filePath):
+    print("Adding users...")
     file = open(filePath)
     lines = file.readlines()
     for i in range(0, len(lines), 4):
@@ -46,15 +47,20 @@ def ReadUserFile(users, filePath):
         users.append(newUser)
 
         #디버깅용
-        print("User added (" + newUser.num + ", " + newUser.name + ")")
+        #print("User added (" + newUser.num + ", " + newUser.name + ")")
+    print("All users added.")
 
 def ReadFriendFile(users, filePath):
+    print("Adding friends...")
+    userNum = '(none)'
+    
     file = open(filePath)
     lines = file.readlines()
     for i in range(0, len(lines), 3):
-        userNum = (lines[i])[0:-1]
+        if (userNum != (lines[i])[0:-1]):   #유저 번호가 이전과 다르면
+            userNum = (lines[i])[0:-1]
+            user = userByNum(users, userNum)
         friendNum = (lines[i + 1])[0:-1]
-        user = userByNum(users, userNum)
         friend = userByNum(users, friendNum)
         
         if ((user == None) or (friend == None)):
@@ -62,21 +68,27 @@ def ReadFriendFile(users, filePath):
             continue;
         else:
             user.friends.append(friend);
-            print("Friend added (" + userNum + ", " + friendNum + ")")
+            #print("Friend added (" + userNum + ", " + friendNum + ")") #디버깅용
+    print("All friends added")
             
 def ReadTweetFile(tweets, users, filePath):
+    print("Adding tweets...")
+    userNum = '(none)'
+    
     file = open(filePath)
     lines = file.readlines()
     for i in range(0, len(lines), 4):
-        userNum = (lines[i])[0:-1]
-        user = userByNum(users, userNum)
+        if (userNum != (lines[i])[0:-1]):   #유저 번호가 이전과 다르면
+            userNum = (lines[i])[0:-1]
+            user = userByNum(users, userNum)
         #날짜 무시
         if(user == None):
             print("Error: User not exitst (TweetFile) (" + userNum + ")");
             continue;
         word = (lines[i + 2])[0:-1]
         AddTweet(tweets, user, word)
-        print("Tweet added (" + userNum + ")")
+        #print("Tweet added (" + userNum + ")") #디버깅용
+    print("All tweets added")
 
 def ReadDataFiles(users, tweets):
     ReadUserFile(users, "user.txt")
