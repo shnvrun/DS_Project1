@@ -125,9 +125,18 @@ def FriendsOfUsers(targetUsers):
     resUsers = list(set(resUsers))  #중복 제거
     return resUsers
 
-#def DeleteTweets(tweets, targetTweets):
+def DeleteTweetsByWord(tweets, targetWord):
+    deletedUsers = []
+    for tweet in tweets:
+        if(tweet.word == targetWord):
+            deletedUsers = deletedUsers + tweet.tweetedUsers
+            tweets.remove(tweet)
+    deletedUsers = list(set(deletedUsers))  #중복 제거
+    return deletedUsers
 
-#def DeleteUsers(users, targetUsers):
+def DeleteUser(users, targetUsers):
+    for targetUser in targetUsers:
+        users.remove(targetUser)
 
 def printFinish():
     print("====Finished====")
@@ -137,6 +146,7 @@ def main():
     users = []
     tweets = []
     usersTweeted = None
+    usersTweetsDeleted = None
     while (1):
         print("0. Read data files")
         print("1. Display statistics")
@@ -206,6 +216,23 @@ def main():
                 for resUser in result:
                     print(resUser.name)
                 printFinish()
+        elif (selectNum == 6):
+            print("====Delete all mentions of a word====")
+            print("Target word: ", end='')
+            targetWord = input()
+
+            usersTweetsDeleted = DeleteTweetsByWord(tweets, targetWord)
+
+            printFinish()
+        elif (selectNum == 7):
+            print("====Delete all users who mentioned a word====")
+            if(usersTweetsDeleted == None):
+                print("Error: No target user. You must run menu no.6 first.")
+                printFinish()
+                continue
+            else:
+                DeleteUser(users, usersTweetsDeleted)
+            printFinish()
         elif (selectNum == 99):
             print("bye.")
             break
