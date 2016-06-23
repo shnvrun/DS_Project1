@@ -22,13 +22,13 @@ def AddTweet(tweets, user, word):
     tweets.append(newTweet)
     return newTweet
 
-def userByNum(users, num):
+def UserByNum(users, num):
     for user in users:
         if (user.num == num):
             return user
     return None
 
-def tweetsByUser(tweets, user):
+def TweetsByUser(tweets, user):
     result = []
     for tweet in tweets:
         if (tweet.tweetedUsers.count(user) > 0): #트윗한 사람중 유저가 존재하면
@@ -59,9 +59,9 @@ def ReadFriendFile(users, filePath):
     for i in range(0, len(lines), 3):
         if (userNum != (lines[i])[0:-1]):   #유저 번호가 이전과 다르면
             userNum = (lines[i])[0:-1]
-            user = userByNum(users, userNum)
+            user = UserByNum(users, userNum)
         friendNum = (lines[i + 1])[0:-1]
-        friend = userByNum(users, friendNum)
+        friend = UserByNum(users, friendNum)
         
         if ((user == None) or (friend == None)):
             print("Error: User not exist (FriendFile) (" + userNum + ", " + friendNum + ")")
@@ -80,7 +80,7 @@ def ReadTweetFile(tweets, users, filePath):
     for i in range(0, len(lines), 4):
         if (userNum != (lines[i])[0:-1]):   #유저 번호가 이전과 다르면
             userNum = (lines[i])[0:-1]
-            user = userByNum(users, userNum)
+            user = UserByNum(users, userNum)
         #날짜 무시
         if(user == None):
             print("Error: User not exitst (TweetFile) (" + userNum + ")");
@@ -90,40 +90,129 @@ def ReadTweetFile(tweets, users, filePath):
         #print("Tweet added (" + userNum + ")") #디버깅용
     print("All tweets added")
 
-def ReadDataFiles(users, tweets):
-    ReadUserFile(users, "user.txt")
-    ReadFriendFile(users, "friend.txt")
-    ReadTweetFile(tweets, users, "word.txt")
+##
 
-def DisplayStatistics(users, tweets):
+def Statistics(users, tweets):
     totalFriendship = 0
     totalTweets = 0
-    
     for user in users:
         totalFriendship += len(user.friends)
     for tweet in tweets:
         totalTweets += len(tweet.tweetedUsers)
-        
-    print("Total users:", len(users))
-    print("Total friendship records:", totalFriendship)
-    print("Total tweets:", totalTweets)
+    return (len(users), totalFriendship, totalTweets)
 
 def Top5Words(tweets):
     tweets.sort(key=lambda tweet:len(tweet.tweetedUsers), reverse=True)
-    for i in range(0, 5):
-        print(tweets[i].word)
+    return tweets[:5]
 
 def Top5Users(users, tweets):
-    users.sort(key=lambda user:len(tweetsByUser(tweets, user)), reverse=True)
-    for i in range(0, 5):
-        print(users[i].name)
+    users.sort(key=lambda user:len(TweetsByUser(tweets, user)), reverse=True)
+    return users[:5]
+
+
+def UsersTweetedWord(tweets, targetWord):
+    resUsers = []
+    for tweet in tweets:
+        if(tweet.word == targetWord):
+            resUsers = resUsers + tweet.tweetedUsers
+    resUsers = list(set(resUsers))  #중복 제거
+    return resUsers
+    
+def FriendsOfUsers(targetUsers):
+    resUsers = []
+    for targetUser in targetUsers:
+        resUsers = resUsers + targetUser.friends
+    resUsers = list(set(resUsers))  #중복 제거
+    return resUsers
+
+#def DeleteTweets(tweets, targetTweets):
+
+#def DeleteUsers(users, targetUsers):
+
+def printFinish():
+    print("====Finished====")
+    print()
             
 def main():
-    ReadDataFiles(users, tweets)
-    DisplayStatistics(users, tweets)
-    Top5Words(tweets)
-    Top5Users(users, tweets)
+    users = []
+    tweets = []
+    usersTweeted = None
+    while (1):
+        print("0. Read data files")
+        print("1. Display statistics")
+        print("2. Top 5 most tweeted words")
+        print("3. Top 5 most tweeted users")
+        print("4. Find users who tweeted a word")
+        print("5. Find all people who are friends of the above users")
+        print("6. Delete all mentions of a word")
+        print("7. Delete all users who mentioned a word")
+        print("8. Find strongly connected components")
+        print("9. Find shortest path from a given user")
+        print("99. Quit")
+        print("Select Menu: ", end='')
+        selectNum = int(input())
+        if (selectNum == 0):
+            print("====Read data files====")
+            
+            ReadUserFile(users, "user.txt")
+            ReadFriendFile(users, "friend.txt")
+            ReadTweetFile(tweets, users, "word.txt")
+
+            printFinish()
+        elif (selectNum == 1):
+            print("====Display statistics====")
+
+            result = Statistics(users, tweets)
+            
+            print("Total users:", result[0])
+            print("Total friendship records:", result[1])
+            print("Total tweets:", result[2])
+            printFinish()
+        elif (selectNum == 2):
+            print("====Top 5 most tweeted words====")
+
+            result = Top5Words(tweets)
+
+            for resTweet in result:
+                print(resTweet.word)
+            printFinish()
+        elif (selectNum == 3):
+            print("====Top 5 most tweeted users====")
+
+            result = Top5Users(users, tweets)
+
+            for resUser in result:
+                print(resUser.name)
+            printFinish()
+        elif (selectNum == 4):
+            print("====Find users who tweeted a word====")
+            print("Target word: ", end='')
+            targetWord = input()
+
+            usersTweeted = UsersTweetedWord(tweets, targetWord)
+
+            for userTweeted in usersTweeted:
+                print(userTweeted.name)
+            printFinish()
+        elif (selectNum == 5):
+            print("====Find all people who are friends of the above users====")
+            if(usersTweeted == None):
+                print("Error: No target user. You must run menu no.4 first.")
+                printFinish()
+                continue
+            else:
+                result = FriendsOfUsers(usersTweeted)
+
+                for resUser in result:
+                    print(resUser.name)
+                printFinish()
+        elif (selectNum == 99):
+            print("bye.")
+            break
+        else:
+            print("====Worng number====")
+            print("Error: Please select from above menu.")
+            print("====Finished====")
+            print()
     
-users = []
-tweets = []
 main()
