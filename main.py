@@ -135,11 +135,23 @@ def ReadTweetFile(tweets, users, filePath):
 def Statistics(users, tweets):
     totalFriendship = 0
     totalTweets = 0
+    minimumFriends = len(users[0].friends)
+    maximumFriends = 0
+    minimumTweets = len(TweetsByUser(tweets, users[0]))
+    maximumTweets = 0
     for user in users:
         totalFriendship += len(user.friends)
+        if (minimumFriends > len(user.friends)):
+            minimumFriends = len(user.friends)
+        elif (maximumFriends < len(user.friends)):
+            maximumFriends = len(user.friends)
+        if (minimumTweets > len(TweetsByUser(tweets, user))):
+            minimumTweets = len(TweetsByUser(tweets, user))
+        elif (maximumTweets < len(TweetsByUser(tweets, user))):
+            maximumTweets = len(TweetsByUser(tweets, user))
     for tweet in tweets:
         totalTweets += len(tweet.tweetedUsers)
-    return (len(users), totalFriendship, totalTweets)
+    return ((totalFriendship / len(users), minimumFriends, maximumFriends), (totalTweets / len(users), minimumTweets, maximumTweets))
 
 def Top5Words(tweets):
     tweets.sort(key=lambda tweet:len(tweet.tweetedUsers), reverse=True)
@@ -274,9 +286,13 @@ def main():
 
             result = Statistics(users, tweets)
             
-            print("Total users:", result[0])
-            print("Total friendship records:", result[1])
-            print("Total tweets:", result[2])
+            print("Average number of firends:", result[0][0], sep = '\t')
+            print("Minimum number of friends:", result[0][1], sep = '\t')
+            print("Maximum number of friends:", result[0][2], sep = '\t')
+            print()
+            print("Average tweets per user:", result[1][0], sep = '\t')
+            print("Minimum tweets per user:", result[1][1], sep = '\t')
+            print("Maximum tweets per user:", result[1][2], sep = '\t')
             PrintFinish()
         elif (selectNum == 2):
             print("====Top 5 most tweeted words====")
