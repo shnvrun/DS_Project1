@@ -3,6 +3,9 @@ class User:
         self.num = '(none)'
         self.name = '(none)'
         self.friends = []
+        self.p = None
+        self.d = None
+        self.f = None
 
 class Tweet:
     def __init__(self):
@@ -34,6 +37,40 @@ def TweetsByUser(tweets, user):
         if (tweet.tweetedUsers.count(user) > 0): #트윗한 사람중 유저가 존재하면
             result.append(tweet)
     return result
+
+def DFSVisit(user, time):
+    time = time + 1
+    user.d = time
+    user.color = "GRAY"     #enum으로 바꾸고싶다
+    for friend in user.friends:
+        if (friend.color == "WHITE"):
+            friend.p = user
+            time = DFSVisit(friend, time)
+    user.color = "BLACK"
+    time = time + 1
+    user.f = time
+    return time
+
+def DFS(users):
+    for user in users:
+        user.color = "WHITE"
+        user.p = None
+    time = 0
+    for user in users:
+        if (user.color == "WHITE"):
+            time = DFSVisit(user, time)
+
+def Transpose(users):
+    resUsers = []
+    for user in users:
+        userCopy = User()
+        userCopy.num = user.num
+        userCopy.name = user.name
+        resUsers.append(userCopy)
+    for user in users:
+        for friend in user.friends:
+            UserByNum(resUsers, friend.num).friends.append(UserByNum(resUsers, user.num))
+    return resUsers
 
 def ReadUserFile(users, filePath):
     print("Adding users...")
@@ -138,7 +175,35 @@ def DeleteUser(users, targetUsers):
     for targetUser in targetUsers:
         users.remove(targetUser)
 
-def printFinish():
+def FindSCC(users):
+    DFS(users)
+    users.sort(key=lambda user:user.f, reverse=True)
+    tUsers = Transpose(users)
+    DFS(tUsers)
+
+    tUsers.sort(key=lambda user:user.f, reverse=True)
+
+    '''
+    for i, user in enumerate(users):
+        print(user.name, user.d, user.f)
+        if (i > 5):
+            break
+    print()
+    for i, user in enumerate(tUsers):
+        print(user.name, user.d, user.f)
+        if (i > 5):
+            break
+    '''
+    
+    scc = []
+    i = 0
+    while (i < len(tUsers)):
+        sccLen = ((tUsers[i].f - tUsers[i].d) + 1) // 2
+        scc.append(tUsers[i:(i + sccLen)])
+        i = i + sccLen
+    return scc
+
+def PrintFinish():
     print("====Finished====")
     print()
             
@@ -168,7 +233,7 @@ def main():
             ReadFriendFile(users, "friend.txt")
             ReadTweetFile(tweets, users, "word.txt")
 
-            printFinish()
+            PrintFinish()
         elif (selectNum == 1):
             print("====Display statistics====")
 
@@ -177,7 +242,7 @@ def main():
             print("Total users:", result[0])
             print("Total friendship records:", result[1])
             print("Total tweets:", result[2])
-            printFinish()
+            PrintFinish()
         elif (selectNum == 2):
             print("====Top 5 most tweeted words====")
 
@@ -185,7 +250,7 @@ def main():
 
             for resTweet in result:
                 print(resTweet.word)
-            printFinish()
+            PrintFinish()
         elif (selectNum == 3):
             print("====Top 5 most tweeted users====")
 
@@ -193,7 +258,7 @@ def main():
 
             for resUser in result:
                 print(resUser.name)
-            printFinish()
+            PrintFinish()
         elif (selectNum == 4):
             print("====Find users who tweeted a word====")
             print("Target word: ", end='')
@@ -203,19 +268,19 @@ def main():
 
             for userTweeted in usersTweeted:
                 print(userTweeted.name)
-            printFinish()
+            PrintFinish()
         elif (selectNum == 5):
             print("====Find all people who are friends of the above users====")
             if(usersTweeted == None):
                 print("Error: No target user. You must run menu no.4 first.")
-                printFinish()
+                PrintFinish()
                 continue
             else:
                 result = FriendsOfUsers(usersTweeted)
 
                 for resUser in result:
                     print(resUser.name)
-                printFinish()
+                PrintFinish()
         elif (selectNum == 6):
             print("====Delete all mentions of a word====")
             print("Target word: ", end='')
@@ -223,16 +288,31 @@ def main():
 
             usersTweetsDeleted = DeleteTweetsByWord(tweets, targetWord)
 
-            printFinish()
+            PrintFinish()
         elif (selectNum == 7):
             print("====Delete all users who mentioned a word====")
+            
             if(usersTweetsDeleted == None):
                 print("Error: No target user. You must run menu no.6 first.")
-                printFinish()
+                PrintFinish()
                 continue
             else:
                 DeleteUser(users, usersTweetsDeleted)
-            printFinish()
+                
+            PrintFinish()
+        elif (selectNum == 8):
+            print("====Find strongly connected components====")
+
+            scc = FindSCC(users)
+
+            for sccUsers in scc:
+                for user in sccUsers:
+                    print(user.name, end='\t')
+                print()
+            PrintFinish()
+        elif (selectNum == 9):
+            print("====Find shortest path from a given user====")
+            PrintFinish()
         elif (selectNum == 99):
             print("bye.")
             break
