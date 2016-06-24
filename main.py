@@ -172,8 +172,11 @@ def DeleteTweetsByWord(tweets, targetWord):
     return deletedUsers
 
 def DeleteUser(users, targetUsers):
+    tUsers = Transpose(users)
     for targetUser in targetUsers:
         users.remove(targetUser)
+        for tFriend in UserByNum(tUsers, targetUser.num).friends:
+            UserByNum(users, tFriend.num).friends.remove(targetUser)
 
 def FindSCC(users):
     DFS(users)
