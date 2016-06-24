@@ -60,3 +60,10 @@ target/
 
 #Ipython Notebook
 .ipynb_checkpoints
+
+#
+friend.txt
+user.txt
+word.txt
+
+self_evaluation.ods
