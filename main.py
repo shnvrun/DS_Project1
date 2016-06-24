@@ -1,3 +1,5 @@
+INF = 1E10
+
 class User:
     def __init__(self):
         self.num = '(none)'
@@ -6,6 +8,7 @@ class User:
         self.p = None
         self.d = None
         self.f = None
+        self.color = "WHITE"
 
 class Tweet:
     def __init__(self):
@@ -210,6 +213,31 @@ def FindSCC(users):
         i = i + sccLen
     return scc
 
+def InitInf(targetUser, q):
+    targetUser.color = "GRAY"
+    for friend in targetUser.friends:
+        if (friend.color != "GRAY"): #White로 초기화 과정이 없었으므로
+            InitInf(friend, q)
+    targetUser.d = INF
+    q.append(targetUser)
+
+def FindShortestPath(targetUser):
+    s = []
+    q = []
+    InitInf(targetUser, q)
+    targetUser.d = 0
+
+    while (len(q) > 0):
+        q.sort(key = lambda user:user.d)
+        u = q[0]
+        q.remove(u)
+        s.append(u)
+        for v in u.friends:
+            if (u.d + len(v.friends) < v.d):    #현재 경로가 기존 경로의 weight보다 작으면
+                v.d = u.d + len(v.friends)
+                v.p = u
+    return s
+    
 def PrintFinish():
     print("====Finished====")
     print()
@@ -319,6 +347,21 @@ def main():
             PrintFinish()
         elif (selectNum == 9):
             print("====Find shortest path from a given user====")
+            print("Target user (number): ", end='')
+            targetUser = UserByNum(users, input())
+
+            result = FindShortestPath(targetUser)
+            result.remove(targetUser)
+            result.sort(key = lambda user:user.d)
+            result = result[0:5]
+
+            print("Top 5")
+            for user in result:
+                print("D:", user.d, end='\t')
+                while (user.p != None):
+                    print(user.num, user.name, sep='/', end="\t<-- ")
+                    user = user.p
+                print(user.num, user.name, sep='/')
             PrintFinish()
         elif (selectNum == 99):
             print("bye.")
