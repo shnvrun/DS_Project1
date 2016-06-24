@@ -171,12 +171,16 @@ def DeleteTweetsByWord(tweets, targetWord):
     deletedUsers = list(set(deletedUsers))  #중복 제거
     return deletedUsers
 
-def DeleteUser(users, targetUsers):
+def DeleteUser(users, tweets, targetUsers):
     tUsers = Transpose(users)
     for targetUser in targetUsers:
         users.remove(targetUser)
         for tFriend in UserByNum(tUsers, targetUser.num).friends:
             UserByNum(users, tFriend.num).friends.remove(targetUser)
+        for tweet in TweetsByUser(tweets, targetUser):
+            tweet.tweetedUsers.remove(targetUser)
+            if (len(tweet.tweetedUsers) <= 0):
+                tweets.remove(tweet)
 
 def FindSCC(users):
     DFS(users)
@@ -300,7 +304,7 @@ def main():
                 PrintFinish()
                 continue
             else:
-                DeleteUser(users, usersTweetsDeleted)
+                DeleteUser(users, tweets, usersTweetsDeleted)
                 
             PrintFinish()
         elif (selectNum == 8):
