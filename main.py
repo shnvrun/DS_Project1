@@ -93,6 +93,7 @@ def ReadUserFile(users, filePath):
 def ReadFriendFile(users, filePath):
     print("Adding friends...")
     userNum = '(none)'
+    totalFriendship = 0
     
     file = open(filePath)
     lines = file.readlines()
@@ -108,12 +109,15 @@ def ReadFriendFile(users, filePath):
             continue;
         else:
             user.friends.append(friend);
+            totalFriendship = totalFriendship + 1
             #print("Friend added (" + userNum + ", " + friendNum + ")") #디버깅용
     print("All friends added")
+    return totalFriendship
             
 def ReadTweetFile(tweets, users, filePath):
     print("Adding tweets...")
     userNum = '(none)'
+    totalTweets = 0
     
     file = open(filePath)
     lines = file.readlines()
@@ -127,8 +131,10 @@ def ReadTweetFile(tweets, users, filePath):
             continue;
         word = (lines[i + 2])[0:-1]
         AddTweet(tweets, user, word)
+        totalTweets = totalTweets + 1
         #print("Tweet added (" + userNum + ")") #디버깅용
     print("All tweets added")
+    return totalTweets
 
 ##
 
@@ -277,9 +283,12 @@ def main():
             print("====Read data files====")
             
             ReadUserFile(users, "user.txt")
-            ReadFriendFile(users, "friend.txt")
-            ReadTweetFile(tweets, users, "word.txt")
+            totalFriendship = ReadFriendFile(users, "friend.txt")
+            totalTweets = ReadTweetFile(tweets, users, "word.txt")
 
+            print("Total users:", len(users))
+            print("Total friendship records:", totalFriendship)
+            print("Total tweets:", totalTweets)
             PrintFinish()
         elif (selectNum == 1):
             print("====Display statistics====")
