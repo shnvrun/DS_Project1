@@ -197,7 +197,11 @@ def DeleteUser(users, tweets, targetUsers):
     for targetUser in targetUsers:
         users.remove(targetUser)
         for tFriend in UserByNum(tUsers, targetUser.num).friends:
-            UserByNum(users, tFriend.num).friends.remove(targetUser)
+            friend = UserByNum(users, tFriend.num)
+            if(friend != None):
+                friend.friends.remove(targetUser)
+            else:
+                print("Warning: No target friend")
         for tweet in TweetsByUser(tweets, targetUser):
             tweet.tweetedUsers.remove(targetUser)
             if (len(tweet.tweetedUsers) <= 0):
