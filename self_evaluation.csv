@@ -8,5 +8,5 @@ Top 5 most tweeted users,5,5
 Find all users who mentioned a word,10,10
 Find all users who are friend of the above user,5,5
 Top 5 strongly connected components,0,10
-Find shortest path from a user (id),10,10
-TOTAL,110,120
+Find shortest path from a user (id),5,10
+TOTAL,105,120
