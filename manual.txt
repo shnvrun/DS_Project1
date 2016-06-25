@@ -1,0 +1,50 @@
+﻿요약
+	사용자, 친구, 트윗 데이터를 읽어와 분석하는 프로그램.
+상세
+	프로그램 실행시 다음 기능 중 하나를 선택하여 실행하며, 실행이 끝나면 선택을 반복한다.
+	
+	0.	Read data files
+		다음 파일로부터 데이터를 읽어 메모리에 저장한다.
+			user.txt
+			friend.txt
+			word.txt
+		실행이 끝나면 읽어들인 총 데이터 수를 출력한다.
+		
+	1.	Display statistics
+		메모리의 데이터에 대해 다음 정보를 표시한다.
+			사용자당 평균 친구 수
+			사용자당 최소 찬구 수
+			사용자당 최대 친구 수
+			사용자당 평균 트윗 수
+			사용자당 최소 트윗 수
+			사용자당 최대 트윗 수
+		
+	2.	Top 5 most tweeted words
+		가장 많이 트윗된 5개의 단어를 표시한다.
+		
+	3.	Top 5 most tweeted users
+		가장 많이 트윗한 5명의 사용자를 표시한다.
+		
+	4.	Find users who tweeted a word
+		입력받은 단어를 트윗한 사용자를 모두 표시한다.
+		
+	5.	Find all people who are friends of the above users
+		기능 4.에서 표시된 사용자의 친구를 모두 표시한다.
+		기능 4.가 실행된적이 없으면 실행되지 않는다.
+		
+	6.	Delete all mentions of a word
+		입력받은 단어와 일치하는 트윗을 메모리에서 모두 삭제한다.
+		
+	7.	Delete all users who mentioned a word
+		기능 6.에서 삭제된 트윗을 트윗한 사용자를 메모리에서 모두 삭제한다.
+		해당하는 사용자의 친구 정보와 트윗 또한 삭제된다.
+		기능 6.이 실행된적이 없으면 실행되지 않는다.
+		
+	8.	Find strongly connected components
+		전체 사용자에 대해 strongly connected component들을 찾는다.
+		
+	9.	Find shortest path from a given user
+		입력받은 사용자에 대해 최소 경로를 가지는 5명의 사용자와 해당하는 경로를 표시한다.
+		
+	99.	Quit
+		프로그램을 종료한다.
